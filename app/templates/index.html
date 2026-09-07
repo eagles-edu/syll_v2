@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Syllabicator — Phonics &amp; Syllable Analyzer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="hero">
+        <p class="eyebrow">Phonics-first ESL reader</p>
+        <h1>Syllabicator</h1>
+        <p class="subtitle">
+          Decode English words into stress-aware syllables with a teaching-first interface. Supports single words and bulk processing (1 to 100+ words).
+        </p>
+      </header>
+
+      <section class="search-panel">
+        <form id="word-form" class="search-form">
+          <label for="word-input" class="sr-only">Words to analyze</label>
+          <div class="input-wrapper">
+            <textarea
+              id="word-input"
+              name="word"
+              rows="1"
+              placeholder="Enter 1 word or paste a bulk list of 100+ words (separated by newlines, commas, or spaces)…"
+              spellcheck="false"
+              autocomplete="off"
+            >{{ word or '' }}</textarea>
+            <div class="input-footer">
+              <span id="word-counter" class="word-counter">0 words detected</span>
+              <div class="quick-actions">
+                <button type="button" id="clear-btn" class="btn-text">Clear</button>
+                <button type="button" id="sample-btn" class="btn-text">Load sample (10 words)</button>
+              </div>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="submit" id="submit-btn" class="btn-primary">
+              <span class="btn-text-label">Analyze</span>
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Single Word Result Card -->
+      <section id="result-card" class="result-card hidden">
+        <div class="result-header">
+          <span class="label">Reading pattern</span>
+          <span id="cefr-badge" class="badge">A1</span>
+        </div>
+        <div class="word-row">
+          <h2 id="word-display">—</h2>
+        </div>
+        <div id="decode-display" class="decode-display">—</div>
+        <div class="meta-grid">
+          <div>
+            <span class="meta-label">Syllables</span>
+            <strong id="syllable-count">0</strong>
+          </div>
+          <div>
+            <span class="meta-label">Stress</span>
+            <strong id="stress-index">0</strong>
+          </div>
+        </div>
+      </section>
+
+      <!-- Bulk Processing Results Section -->
+      <section id="bulk-results" class="bulk-results-panel hidden">
+        <div class="bulk-header">
+          <div class="bulk-title-group">
+            <span class="label">Bulk analysis output</span>
+            <h2 id="bulk-count-heading">Processed 0 words</h2>
+          </div>
+          <div class="bulk-actions">
+            <button type="button" id="copy-all-btn" class="btn-secondary">📋 Copy all</button>
+            <button type="button" id="download-txt-btn" class="btn-secondary">📥 Export TXT</button>
+            <button type="button" id="download-csv-btn" class="btn-secondary">📥 Export CSV</button>
+          </div>
+        </div>
+        <div id="bulk-grid" class="bulk-grid">
+          <!-- Dynamic word cards injected here -->
+        </div>
+      </section>
+
+      <!-- Error message container -->
+      <div id="error-banner" class="error-banner hidden">
+        <span id="error-message">Unable to process request.</span>
+      </div>
+    </main>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+  </body>
+</html>

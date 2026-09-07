@@ -1,0 +1,25 @@
+{
+  "name": "syllabicator-v2",
+  "private": true,
+  "version": "2.0.0",
+  "scripts": {
+    "lint:js": "eslint app/static --ext .js",
+    "lint:css": "stylelint \"app/static/**/*.css\"",
+    "lint:html": "htmlhint \"app/templates/**/*.html\"",
+    "lint:python": "if [ -x .venv/bin/python ]; then .venv/bin/python -m pylint app run.py tests; else python3 -m pylint app run.py tests; fi",
+    "lint:all": "npm run lint:js && npm run lint:css && npm run lint:html && npm run lint:python",
+    "quality": "npm run test:coverage && npm run lint:all",
+    "test:coverage": "if [ -x .venv/bin/python ]; then .venv/bin/python -m pytest --cov=app --cov-report=term-missing --cov-fail-under=98; else python3 -m pytest --cov=app --cov-report=term-missing --cov-fail-under=98; fi",
+    "test": "if [ -x .venv/bin/python ]; then .venv/bin/python -m pytest -q; else python3 -m pytest -q; fi"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.1",
+    "eslint-config-standard": "^17.1.0",
+    "htmlhint": "^1.9.2",
+    "stylelint": "^17.15.0",
+    "stylelint-config-standard": "^40.0.0"
+  }
+}

@@ -1,0 +1,15 @@
+.venv/
+__pycache__/
+.pytest_cache/
+*.pyc
+.env
+.env.*
+!.env.example
+instance/
+.DS_Store
+coverage.xml
+.coverage
+htmlcov/
+logs/
+DYNAMICALLY-log.md
+node_modules

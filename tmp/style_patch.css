@@ -1,0 +1,21 @@
+/* Append directly to the bottom of app/static/style.css */
+textarea#word-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  background-color: #fff;
+  box-shadow: 0 0 0 3px rgba(27, 110, 243, 15%);
+}
+
+.bulk-grid::-webkit-scrollbar {
+  width: 6px;
+}
+.bulk-grid::-webkit-scrollbar-track {
+  background: transparent;
+}
+.bulk-grid::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 99px;
+}
+.bulk-grid::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
+}

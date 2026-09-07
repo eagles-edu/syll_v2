@@ -1,0 +1,13 @@
+.git
+.gitignore
+.env
+.env.*
+.venv
+node_modules
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.DS_Store
+npm-debug.log
+package-lock.json

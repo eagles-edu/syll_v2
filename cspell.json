@@ -1,0 +1,31 @@
+{
+  "version": "0.2",
+  "ignorePaths": [],
+  "dictionaryDefinitions": [],
+  "dictionaries": [],
+  "words": [
+    "CEFR",
+    "ckle",
+    "cov",
+    "éng",
+    "ignorePaths",
+    "lish",
+    "NFRP",
+    "NLTK",
+    "odfpy",
+    "openpyxl",
+    "ous",
+    "pyc",
+    "pycache",
+    "pyd",
+    "pyo",
+    "pytest",
+    "PYTHONDONTWRITEBYTECODE",
+    "signa",
+    "syll",
+    "tion",
+    "venv"
+  ],
+  "ignoreWords": [],
+  "import": []
+}
