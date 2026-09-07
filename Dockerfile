@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM python:3.13-slim-bookworm
+FROM python:3.14-alpine
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
@@ -11,7 +11,9 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 WORKDIR /app
 
 COPY requirements.txt ./
-RUN python -m pip install --upgrade pip \
+RUN apk add --no-cache ca-certificates words-en \
+    && ln -s /usr/share/dict/american-english /usr/share/dict/words \
+    && python -m pip install --upgrade pip \
     && python -m pip install -r requirements.txt \
     && mkdir -p "${NLTK_DATA}" \
     && python -c "import nltk; nltk.download('cmudict', download_dir='${NLTK_DATA}', quiet=True)"

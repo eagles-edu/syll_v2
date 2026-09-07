@@ -43,7 +43,7 @@ def test_application_logging_writes_once_after_repeated_factory_calls(tmp_path, 
     assert sum(
         getattr(handler, "syllabicator_handler", False)
         for handler in logging.getLogger("app").handlers
-    ) == 3
+    ) == 4
 
 
 def test_reviewed_beautiful_split_and_spelling_invariance(isolated_service):

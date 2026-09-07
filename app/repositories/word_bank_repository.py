@@ -102,13 +102,20 @@ class WordBankRepository:
                 int(bool(record["is_academic"])), record.get("notes"),
             )
             if existing:
-                connection.execute(
-                    """UPDATE words SET word=?, decoding=?, formatted=?, syllables_json=?,
-                    syllable_count=?, stressed_syllable_index=?, pos=?, family=?, cefr=?, source=?,
-                    is_academic=?, notes=?, updated_at=CURRENT_TIMESTAMP WHERE id=?""",
-                    (*values[1:], existing["id"]),
-                )
                 word_id = existing["id"]
+                current = connection.execute(
+                    """SELECT word, decoding, formatted, syllables_json, syllable_count,
+                    stressed_syllable_index, pos, family, cefr, source, is_academic, notes
+                    FROM words WHERE id = ?""",
+                    (word_id,),
+                ).fetchone()
+                if tuple(current) != values[1:]:
+                    connection.execute(
+                        """UPDATE words SET word=?, decoding=?, formatted=?, syllables_json=?,
+                        syllable_count=?, stressed_syllable_index=?, pos=?, family=?, cefr=?, source=?,
+                        is_academic=?, notes=?, updated_at=CURRENT_TIMESTAMP WHERE id=?""",
+                        (*values[1:], word_id),
+                    )
             else:
                 cursor = connection.execute(
                     """INSERT INTO words (normalized_word, word, decoding, formatted, syllables_json,
@@ -117,11 +124,17 @@ class WordBankRepository:
                     values,
                 )
                 word_id = cursor.lastrowid
-            connection.execute("DELETE FROM word_syllables WHERE word_id = ?", (word_id,))
-            connection.executemany(
-                "INSERT INTO word_syllables (word_id, syllable, ordinal) VALUES (?, ?, ?)",
-                [(word_id, syllable, index) for index, syllable in enumerate(record["syllables"])],
-            )
+            existing_syllables = connection.execute(
+                "SELECT syllable, ordinal FROM word_syllables WHERE word_id = ? ORDER BY ordinal",
+                (word_id,),
+            ).fetchall()
+            expected_syllables = [(syllable, index) for index, syllable in enumerate(record["syllables"])]
+            if [tuple(row) for row in existing_syllables] != expected_syllables:
+                connection.execute("DELETE FROM word_syllables WHERE word_id = ?", (word_id,))
+                connection.executemany(
+                    "INSERT INTO word_syllables (word_id, syllable, ordinal) VALUES (?, ?, ?)",
+                    [(word_id, syllable, index) for index, syllable in enumerate(record["syllables"])],
+                )
             connection.execute(
                 """INSERT INTO word_metadata (word_id, pos, family, notes) VALUES (?, ?, ?, ?)
                 ON CONFLICT(word_id) DO UPDATE SET pos=excluded.pos, family=excluded.family, notes=excluded.notes""",

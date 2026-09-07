@@ -5,7 +5,12 @@ from app.logging_config import setup_logging
 
 
 def create_app() -> Flask:
-    setup_logging(settings.log_file, settings.log_level, settings.markdown_trace_file)
+    setup_logging(
+        settings.log_file,
+        settings.log_level,
+        settings.markdown_trace_file,
+        settings.logic_disagreement_file,
+    )
     app = Flask(__name__, template_folder="templates", static_folder="static")
     app.config.from_mapping(
         SECRET_KEY=settings.secret_key,

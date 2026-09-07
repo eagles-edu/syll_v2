@@ -165,7 +165,8 @@ class EslPhonicsEngine:
         prefixes: list[str] = []
         suffixes: list[str] = []
         pass_number = 0
-        while True:
+        max_passes = max(4, len(remaining) * 2)
+        while pass_number < max_passes:
             pass_number += 1
             changed = False
             trace_event(
@@ -220,6 +221,14 @@ class EslPhonicsEngine:
                     {"core": remaining, "prefixes": prefixes, "suffixes": suffixes},
                 )
                 return remaining, prefixes, suffixes
+        trace_event(
+            "AFF-07",
+            "affix_reduction_guard",
+            {"word": word, "max_passes": max_passes},
+            "loop_limit_reached",
+            resolution="fallback",
+        )
+        return remaining, prefixes, suffixes
 
     def _self_correct_boundaries(self, chunks: List[str], word: str, target_vowel_count: int = 0) -> List[str]:
         """Repair orphan chunks, protected-unit splits, and spelling loss."""
@@ -256,7 +265,8 @@ class EslPhonicsEngine:
         )
         index = 0
         repair_pass = 0
-        while index < len(repaired) - 1:
+        max_passes = max(1, len(repaired) * 2)
+        while index < len(repaired) - 1 and repair_pass < max_passes:
             repair_pass += 1
             before = list(repaired)
             moved = False
@@ -277,13 +287,16 @@ class EslPhonicsEngine:
                 before,
                 {"pass": repair_pass, "changed": moved, "result": repaired},
             )
+        if index < len(repaired) - 1:
+            trace_event("REP-06", "protected_unit_guard", repaired, "loop_limit_reached", resolution="fallback")
         return repaired
 
     def _repair_orphan_chunks(self, repaired: List[str]) -> List[str]:
         """Attach consonant-only chunks to a neighboring syllable."""
         index = 0
         orphan_pass = 0
-        while index < len(repaired):
+        max_passes = max(1, len(repaired) * 2)
+        while index < len(repaired) and orphan_pass < max_passes:
             orphan_pass += 1
             before = list(repaired)
             if not any(char in self.vowels for char in repaired[index]) and len(repaired) > 1:
@@ -306,6 +319,8 @@ class EslPhonicsEngine:
                 {"pass": orphan_pass, "changed": False, "result": repaired},
             )
             index += 1
+        if index < len(repaired):
+            trace_event("REP-06", "orphan_chunk_guard", repaired, "loop_limit_reached", resolution="fallback")
         return repaired
 
     def _repair_inviolable_suffixes(self, repaired: List[str], word: str) -> List[str]:
@@ -316,13 +331,18 @@ class EslPhonicsEngine:
             suffix_start = len(word) - len(suffix)
             position = 0
             index = 0
-            while index < len(repaired) - 1:
+            repair_pass = 0
+            max_passes = max(1, len(repaired) * 2)
+            while index < len(repaired) - 1 and repair_pass < max_passes:
+                repair_pass += 1
                 position += len(repaired[index])
                 if suffix_start < position < len(word):
                     repaired[index:index + 2] = [repaired[index] + repaired[index + 1]]
                     position -= len(repaired[index])
                     continue
                 index += 1
+            if index < len(repaired) - 1:
+                trace_event("REP-06", "suffix_boundary_guard", repaired, "loop_limit_reached", resolution="fallback")
         return repaired
 
     def _trace_decision_monitor(self, node: str, evidence: object, decision: object, status: str) -> None:
@@ -578,7 +598,8 @@ class EslPhonicsEngine:
             target,
         )
         pass_number = 0
-        while len(reconciled) < target:
+        max_passes = max(1, len(word) * 2)
+        while len(reconciled) < target and pass_number < max_passes:
             pass_number += 1
             trace_event(
                 "REC-07",
@@ -608,13 +629,24 @@ class EslPhonicsEngine:
                 {"cut": cut, "result": reconciled, "repeat": len(reconciled) < target},
             )
             trace_event("REC-04", "reconciliation_split", chunk, reconciled)
+        if len(reconciled) < target and pass_number >= max_passes:
+            trace_event(
+                "REC-10",
+                "reconciliation_guard",
+                {"word": word, "target": target},
+                "loop_limit_reached",
+                resolution="fallback",
+            )
         trace_event(
             "REC-09",
             "reconciliation_transition",
             reconciled,
             "merge_phase" if len(reconciled) > target else "boundary_repair",
         )
-        while len(reconciled) > target:
+        merge_passes = 0
+        max_merge_passes = max(1, len(word) * 2)
+        while len(reconciled) > target and merge_passes < max_merge_passes:
+            merge_passes += 1
             merged = False
             for index in range(len(reconciled) - 1):
                 left, right = reconciled[index:index + 2]
@@ -626,6 +658,14 @@ class EslPhonicsEngine:
                 reconciled[-2:] = [reconciled[-2] + reconciled[-1]]
             trace_event("REC-05", "reconciliation_merge", {"left": left, "right": right}, reconciled)
             trace_event("REC-08", "reconciliation_decision", reconciled, {"repeat": len(reconciled) > target})
+        if len(reconciled) > target:
+            trace_event(
+                "REC-10",
+                "reconciliation_guard",
+                {"word": word, "target": target},
+                "loop_limit_reached",
+                resolution="fallback",
+            )
         result = self._self_correct_boundaries(reconciled, word, target)
         logger.debug("phonics reconcile result word=%r chunks=%r", word, result)
         trace_event("REC-06", "reconciliation_result", reconciled, result)

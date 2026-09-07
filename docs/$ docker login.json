@@ -1,0 +1,114 @@
+$ docker login
+
+USING WEB-BASED LOGIN
+
+i Info → To sign in with credentials on the command line, use 'docker login -u <username>'
+         
+
+Your one-time device confirmation code is: GPWS-CMVQ
+Press ENTER to open your browser or submit your device code here: https://login.docker.com/activate
+
+Waiting for authentication in the browser…
+
+Login Succeeded
+(.venv) eagles@cloud:~/dockerz/syll_v2$ docker scout cves local://syllabicator-v2:local
+    ✓ Image stored for indexing
+    ✓ Indexed 93 packages
+    ✗ Detected 4 vulnerable packages with a total of 9 vulnerabilities
+
+
+## Overview
+
+                   │         Analyzed Image          
+───────────────────┼─────────────────────────────────
+ Target            │  local://syllabicator-v2:local  
+   digest          │  d0cf420e9704                   
+   platform        │ linux/amd64                     
+   vulnerabilities │    0C     8H     1M     0L      
+   size            │ 47 MB                           
+   packages        │ 93                              
+
+
+## Packages and Vulnerabilities
+
+   0C     4H     0M     0L  util-linux 2.42.1-r0
+pkg:apk/alpine/util-linux@2.42.1-r0?os_name=alpine&os_version=3.24
+
+    ✗ HIGH CVE-2026-76642
+      https://scout.docker.com/v/CVE-2026-76642
+      Affected range : <2.42.3-r0 
+      Fixed version  : 2.42.3-r0  
+    
+    ✗ HIGH CVE-2026-78408
+      https://scout.docker.com/v/CVE-2026-78408
+      Affected range : <2.42.3-r1 
+      Fixed version  : 2.42.3-r0  
+    
+    ✗ HIGH CVE-2026-78410
+      https://scout.docker.com/v/CVE-2026-78410
+      Affected range : <2.42.3-r0 
+      Fixed version  : 2.42.3-r0  
+    
+    ✗ HIGH CVE-2026-78409
+      https://scout.docker.com/v/CVE-2026-78409
+      Affected range : <2.42.3-r0 
+      Fixed version  : 2.42.3-r0  
+    
+
+   0C     2H     0M     0L  msgpack 1.1.2
+pkg:pypi/msgpack@1.1.2
+
+    ✗ HIGH GHSA-6v7p-g79w-8964 [Use After Free]
+      https://scout.docker.com/v/GHSA-6v7p-g79w-8964
+      Affected range : <=1.2.0                                      
+      Fixed version  : 1.2.1                                        
+      CVSS Score     : 7.5                                          
+      CVSS Vector    : CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H 
+    
+    ✗ HIGH CVE-2026-57585
+      https://scout.docker.com/v/CVE-2026-57585
+      Affected range : <1.2.1                                       
+      Fixed version  : 1.2.1                                        
+      CVSS Score     : 7.5                                          
+      CVSS Vector    : CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H 
+    
+
+   0C     1H     1M     0L  setuptools 70.3.0
+pkg:pypi/setuptools@70.3.0
+
+    ✗ HIGH CVE-2025-47273 [Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')]
+      https://scout.docker.com/v/CVE-2025-47273
+      Affected range : <78.1.1                                                             
+      Fixed version  : 78.1.1                                                              
+      CVSS Score     : 7.7                                                                 
+      CVSS Vector    : CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:H/VA:N/SC:N/SI:N/SA:N/E:P 
+    
+    ✗ MEDIUM CVE-2026-59890 [Improper Handling of Unicode Encoding]
+      https://scout.docker.com/v/CVE-2026-59890
+      Affected range : <83.0.0                                      
+      Fixed version  : 83.0.0                                       
+      CVSS Score     : 6.1                                          
+      CVSS Vector    : CVSS:3.1/AV:L/AC:L/PR:N/UI:R/S:U/C:H/I:L/A:N 
+    
+
+   0C     1H     0M     0L  nltk 3.10.3
+pkg:pypi/nltk@3.10.3
+
+    ✗ HIGH CVE-2026-81726 [Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')]
+      https://scout.docker.com/v/CVE-2026-81726
+      Affected range : <=3.10.3                                                        
+      Fixed version  : not fixed                                                       
+      CVSS Score     : 8.3                                                             
+      CVSS Vector    : CVSS:4.0/AV:N/AC:H/AT:N/PR:N/UI:N/VC:H/VI:L/VA:L/SC:N/SI:N/SA:N 
+    
+
+
+9 vulnerabilities found in 4 packages
+  CRITICAL  0 
+  HIGH      8 
+  MEDIUM    1 
+  LOW       0 
+
+
+What's next:
+    View base image update recommendations → docker scout recommendations local://syllabicator-v2:local

@@ -45,6 +45,19 @@ class MarkdownTraceHandler(logging.Handler):
             self.handleError(record)
 
 
+class LogicDisagreementHandler(RotatingFileHandler):
+    """Write sanitized provider/local disagreements as one JSON object per line."""
+
+    def __init__(self, *args: Any, **kwargs: Any):
+        super().__init__(*args, **kwargs)
+        self.setFormatter(JsonLineFormatter())
+
+    def emit(self, record: logging.LogRecord) -> None:
+        if getattr(record, "logic_disagreement", None) is None:
+            return
+        super().emit(record)
+
+
 def _render_trace_event(record: logging.LogRecord, event: Any) -> str:
     """Render one trace event without losing any execution metadata."""
     if record.getMessage().startswith("analysis_step step=000"):
@@ -92,7 +105,12 @@ def _markdown_value(value: Any) -> str:
     return f"\n\n  ```json\n{indented}\n  ```"
 
 
-def setup_logging(log_file: str, log_level: str, markdown_trace_file: str | None = None) -> None:
+def setup_logging(
+    log_file: str,
+    log_level: str,
+    markdown_trace_file: str | None = None,
+    disagreement_file: str | None = None,
+) -> None:
     """Configure application logging for both the console and a rotating file."""
     logger = logging.getLogger("app")
     level = _resolve_level(log_level)
@@ -118,11 +136,24 @@ def setup_logging(log_file: str, log_level: str, markdown_trace_file: str | None
     handlers = [file_handler, console_handler]
     if markdown_trace_file:
         handlers.append(MarkdownTraceHandler(markdown_trace_file))
+    if disagreement_file:
+        disagreement_path = Path(disagreement_file).expanduser().resolve()
+        disagreement_path.parent.mkdir(parents=True, exist_ok=True)
+        disagreement_handler = LogicDisagreementHandler(
+            disagreement_path,
+            maxBytes=_DEFAULT_MAX_BYTES,
+            backupCount=_DEFAULT_BACKUP_COUNT,
+            encoding="utf-8",
+        )
+        disagreement_handler.addFilter(lambda record: getattr(record, "logic_disagreement", None) is not None)
+        disagreement_handler.setFormatter(JsonLineFormatter())
+        handlers.append(disagreement_handler)
     for handler in handlers:
         setattr(handler, _HANDLER_MARKER, True)
         if not isinstance(handler, MarkdownTraceHandler):
             handler.setLevel(level)
-        handler.setFormatter(formatter)
+        if not isinstance(handler, LogicDisagreementHandler):
+            handler.setFormatter(formatter)
         logger.addHandler(handler)
 
     logger.setLevel(level)
@@ -138,6 +169,19 @@ def _create_file_handler(log_path: Path) -> RotatingFileHandler:
     )
 
 
+class JsonLineFormatter(logging.Formatter):
+    """Serialize only the structured disagreement payload without credentials."""
+
+    def format(self, record: logging.LogRecord) -> str:
+        payload = getattr(record, "logic_disagreement", {})
+        return json.dumps(
+            {"timestamp": datetime.fromtimestamp(record.created).isoformat(), "event": payload},
+            ensure_ascii=False,
+            sort_keys=True,
+            default=str,
+        )
+
+
 def _resolve_level(log_level: str) -> int:
     level_name = str(log_level).upper()
     level = getattr(logging, level_name, None)
@@ -146,4 +190,4 @@ def _resolve_level(log_level: str) -> int:
     return level
 
 
-__all__ = ["MarkdownTraceHandler", "setup_logging"]
+__all__ = ["JsonLineFormatter", "LogicDisagreementHandler", "MarkdownTraceHandler", "setup_logging"]

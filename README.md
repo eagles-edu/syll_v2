@@ -36,7 +36,16 @@ Optional environment variables:
 - Application log rotation — default maximum size is 18 MiB, with three backups.
 - `LOG_LEVEL` — logging level (default: `DEBUG`)
 - `TRACE_MARKDOWN_FILE` — human-readable live trace path (default:
-  `DYNAMICALLY-log.md`)
+-  `logs/analysis-trace-log.md`)
+- `LOGIC_DISAGREEMENT_FILE` — rotating JSONL provider/local comparison log
+  (default: `logs/logic-disagreements.jsonl`)
+- `MW_API_KEY` — optional Merriam-Webster API key; the existing
+  `MERRIAM_WEBSTER_COLLEGIATE_API_KEY` and `MERRIAM_WEBSTER_LEARNERS_API_KEY`
+  names are also supported
+- `MERRIAM_WEBSTER_API_BASE_URL` — provider endpoint override
+- `MERRIAM_WEBSTER_TIMEOUT_SECONDS` — provider timeout (default: `3`)
+- `COMPOUND_LEXICON_PATH` — packaged word-list path (default:
+  `/usr/share/dict/words`)
 
 The first time the app runs, it may automatically download the NLTK CMU Pronouncing Dictionary if it is not already available locally.
 
@@ -70,10 +79,16 @@ cluster/VCV decisions, reconciliation, repairs, stress, and final output. It
 is emitted from the executing code path; it is not reconstructed from the
 final syllables afterward.
 
-The same events are rendered as readable Markdown in `DYNAMICALLY-log.md`:
+The same events are rendered as readable Markdown in
+`logs/analysis-trace-log.md`:
 each step is a separate section with labelled input/output and decision fields,
 followed by a completion section containing the final result. The Markdown
 file is updated during execution, not generated afterward.
+
+When MW and local CMU/rule/reviewed logic disagree, the validated MW result
+wins. The comparison is written to `logs/logic-disagreements.jsonl` and also
+appears in the Markdown trace. Provider failures are fail-open and never turn
+normal local analysis into an API error.
 
 In v2, development configuration bypasses the word-bank shortcut during
 `analyze()` by default. Pass `bypass_cache=False` to `WordAnalysisService` when
@@ -94,8 +109,9 @@ Build and run the app with Docker Compose:
 
 Then open http://localhost:5000.
 
-Compose keeps the v2 SQLite database, application log, and dynamic Markdown
-trace in project-scoped Docker volumes. Inspect them with:
+Compose installs the Debian `wamerican` lexicon and keeps the v2 SQLite
+database, application log, disagreement log, and dynamic Markdown trace in
+project-scoped Docker volumes. Inspect them with:
 
   `docker compose exec syllabicator sh -c 'ls -lh /app/logs /app/traces /app/instance'`
 

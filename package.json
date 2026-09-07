@@ -1,7 +1,7 @@
 {
   "name": "syllabicator-v2",
   "private": true,
-  "version": "2.0.0",
+  "version": "0.2.0x",
   "scripts": {
     "lint:js": "eslint app/static --ext .js",
     "lint:css": "stylelint \"app/static/**/*.css\"",
@@ -13,7 +13,7 @@
     "test": "if [ -x .venv/bin/python ]; then .venv/bin/python -m pytest -q; else python3 -m pytest -q; fi"
   },
   "engines": {
-    "node": ">=22.0.0"
+    "node": ">=22.22.1"
   },
   "devDependencies": {
     "eslint": "^8.57.1",

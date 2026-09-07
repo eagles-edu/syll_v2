@@ -12,8 +12,12 @@ services:
       - FLASK_ENV=development
       - OPEN_BROWSER=0
       - LOG_FILE=/app/logs/app.log
-      - TRACE_MARKDOWN_FILE=/app/traces/DYNAMICALLY-log.md
+      - TRACE_MARKDOWN_FILE=/app/logs/analysis-trace-log.md
+      - LOGIC_DISAGREEMENT_FILE=/app/logs/logic-disagreements.jsonl
       - WORD_BANK_DB_PATH=/app/instance/word_bank.sqlite3
+      - MW_API_KEY=${MW_API_KEY:-}
+      - MERRIAM_WEBSTER_COLLEGIATE_API_KEY=${MERRIAM_WEBSTER_COLLEGIATE_API_KEY:-}
+      - MERRIAM_WEBSTER_LEARNERS_API_KEY=${MERRIAM_WEBSTER_LEARNERS_API_KEY:-}
     volumes:
       - syllabicator_logs:/app/logs
       - syllabicator_traces:/app/traces

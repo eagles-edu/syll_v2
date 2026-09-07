@@ -5,7 +5,6 @@ from __future__ import annotations
 
 REVIEWED_SYLLABLES = {
     "beautiful": ["beau", "ti", "ful"],
-    "signpost": ["sign", "post"],
     "pneumatic": ["pneu", "mat", "ic"],
     "signature": ["sig", "na", "ture"],
     "amnesia": ["am", "ne", "sia"],
@@ -42,7 +41,7 @@ REVIEWED_SYLLABLES = {
     "wire": ["wire"],
     "fire": ["fire"],
     "ruin": ["ru", "in"],
-    "scraunced": ["scraunced"],
+    "scraunched": ["scraunched"],
     "aggression": ["ag", "gres", "sion"],
     "resignation": ["res", "ig", "na", "tion"],
     "accommodate": ["ac", "com", "mod", "ate"],
