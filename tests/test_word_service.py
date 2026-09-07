@@ -187,6 +187,25 @@ def test_word_service_handles_consonant_le_and_digraph_patterns(word_service_fix
 
 
 @pytest.mark.parametrize(
+    ("word", "expected"),
+    [
+        ("signpost", ["sign", "post"]),
+        ("pneumatic", ["pneu", "mat", "ic"]),
+        ("signature", ["sig", "na", "ture"]),
+    ],
+)
+def test_word_service_preserves_reviewed_regression_splits(
+    word_service_fixture,
+    word,
+    expected,
+):
+    result = word_service_fixture.analyze(word)
+
+    assert result["syllables"] == expected
+    assert "".join(result["syllables"]) == word
+
+
+@pytest.mark.parametrize(
     "word, expected_syllables, expected_decoding, expected_index",
     [
         ("accidentally", ["ac", "ci", "den", "tal", "ly"], "ac-ci-dén-tal-ly", 2),

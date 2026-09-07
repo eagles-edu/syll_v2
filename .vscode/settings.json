@@ -1,0 +1,16 @@
+{
+  "explorer.excludeGitIgnore": false,
+  "files.exclude": {
+    "**/.git": false,
+    "**/.env": false,
+    "**/.env.*": false,
+    "**/.venv": false,
+    "**/node_modules": false,
+    "**/__pycache__": false,
+    "**/.pytest_cache": false,
+    "**/instance": false,
+    "**/logs": false,
+    "**/**": false,
+    "**/DYNAMICALLY-log.md": false
+  }
+}

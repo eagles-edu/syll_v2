@@ -11,6 +11,16 @@ services:
       - PORT=5000
       - FLASK_ENV=development
       - OPEN_BROWSER=0
+      - LOG_FILE=/app/logs/app.log
+      - TRACE_MARKDOWN_FILE=/app/traces/DYNAMICALLY-log.md
+      - WORD_BANK_DB_PATH=/app/instance/word_bank.sqlite3
     volumes:
-      - .:/app
+      - syllabicator_logs:/app/logs
+      - syllabicator_traces:/app/traces
+      - syllabicator_instance:/app/instance
     command: ["python", "run.py"]
+
+volumes:
+  syllabicator_logs:
+  syllabicator_traces:
+  syllabicator_instance:

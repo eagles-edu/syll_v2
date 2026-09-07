@@ -94,6 +94,11 @@ Build and run the app with Docker Compose:
 
 Then open http://localhost:5000.
 
+Compose keeps the v2 SQLite database, application log, and dynamic Markdown
+trace in project-scoped Docker volumes. Inspect them with:
+
+  `docker compose exec syllabicator sh -c 'ls -lh /app/logs /app/traces /app/instance'`
+
 Stop the app and remove containers with:
 
   `docker compose down`
