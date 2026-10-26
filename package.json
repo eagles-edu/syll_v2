@@ -16,7 +16,7 @@
     "node": ">=22.22.1"
   },
   "devDependencies": {
-    "eslint": "^8.57.1",
+    "eslint": "^10.13.0",
     "eslint-config-standard": "^17.1.0",
     "htmlhint": "^1.9.2",
     "stylelint": "^17.15.0",
